@@ -11,7 +11,7 @@ from ipaddress import ip_address, IPv4Address
 
 def ping(host: IPv4Address | str) -> bool:
     try:
-        out = subprocess.run(f'ping {host}',
+        out = subprocess.run(f'ping {host} -n 1 -w 500',
                              shell=True,
                              stdout=subprocess.PIPE,
                              timeout=12)

@@ -36,5 +36,5 @@ def host_range_ping_tab(host_start: IPv4Address, host_end: IPv4Address) -> None:
 
 if __name__ == '__main__':
     address_1 = ip_address('8.8.8.8')
-    address_2 = ip_address('8.8.8.9')
+    address_2 = ip_address('8.8.8.12')
     host_range_ping_tab(address_1, address_2)
