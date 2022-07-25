@@ -14,3 +14,19 @@ class NotBytes(Exception):
 class MaxLen(Exception):
     def __init__(self, txt=''):
         self.txt = txt
+
+
+class NotDetectedSocket(Exception):
+    pass
+
+
+class DetectedSocket(Exception):
+    pass
+
+
+class UsingProhibitedMethod(Exception):
+    pass
+
+
+class NoFunctionCall(Exception):
+    pass

@@ -13,11 +13,12 @@ from common.variables import *
 import logs.server_log_config
 from logs.decorators import log, Log
 from descriptors import PortDesc
+from metaclasses import ServerVerifier
 
 SERVER_LOGGER = logging.getLogger('server_logger')
 
 
-class Server(Utils):
+class Server(Utils, ServerVerifier):
     listen_port = PortDesc()
 
     def __init__(self, listen_address: str = DEFAULT_LISTEN_ADDRESS, listen_port: int = DEFAULT_PORT):
@@ -28,10 +29,10 @@ class Server(Utils):
         self.clients_socks: list = []
         self.names_client_socks: dict = {}
 
-        self.client_sock: socket = socket
+        self.client_sock: socket.socket = socket.socket()
         self.client_message: dict = {}
         self.messages_list: list = []
-        self.client_with_message: socket = socket
+        self.client_with_message: socket.socket = socket.socket()
 
         self.message_for_send: dict = {}
 
@@ -162,7 +163,6 @@ class Server(Utils):
 if __name__ == '__main__':
     server = Server()
     try:
-        print(server.listen_port)
         server.main()
     except KeyboardInterrupt:
         print('Сервер остановлен.')

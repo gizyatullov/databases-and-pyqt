@@ -11,11 +11,12 @@ from common.utils import Utils
 from common.variables import *
 import logs.client_log_config
 from logs.decorators import log, Log
+from metaclasses import ClientVerifier
 
 CLIENT_LOGGER = logging.getLogger('client_logger')
 
 
-class Client(Utils):
+class Client(Utils, ClientVerifier):
     def __init__(self):
         self.server_address: str = DEFAULT_IP_ADDRESS
         self.server_port: int = DEFAULT_PORT
@@ -209,4 +210,7 @@ class Client(Utils):
 
 if __name__ == '__main__':
     client = Client()
-    client.main()
+    try:
+        client.main()
+    except KeyboardInterrupt:
+        pass
