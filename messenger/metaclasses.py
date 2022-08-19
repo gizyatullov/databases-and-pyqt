@@ -1,76 +1,63 @@
-from socket import socket
-from socket import SOCK_STREAM, AF_INET
 import dis
 
-from common.errors import NotDetectedSocket, DetectedSocket, UsingProhibitedMethod
 
-
-class BaseVerifierMeta(type):
-    FORBIDDEN_CALLS = ('',)
-
-    @staticmethod
-    def check_socket_usage(obj: object, tcp=False) -> bool:
-        if not tcp:
-            return any(map(lambda item: isinstance(item, socket), obj.__dict__.values()))
-
-        sock = None
-        for item in obj.__dict__.values():
-            if isinstance(item, socket):
-                sock = item
-                break
-
-        if not sock:
-            return False
-
-        return all((sock.type == SOCK_STREAM, sock.family == AF_INET))
-
-    @staticmethod
-    def _raise_error(error) -> None:
-        raise error
-
-    def __init__(cls, cls_name: str, bases: tuple, cls_dict: dict):
+# Метакласс для проверки соответствия сервера:
+class ServerMaker(type):
+    def __init__(cls, clsname, bases, clsdict):
+        # Список методов, которые используются в функциях класса:
         methods = []
-        for atr in cls_dict.values():
+        # Атрибуты, вызываемые функциями классов
+        attrs = []
+        for func in clsdict:
+            # Пробуем
             try:
-                ret = dis.get_instructions(atr)
+                ret = dis.get_instructions(clsdict[func])
+                # Если не функция то ловим исключение
             except TypeError:
                 pass
             else:
-                [methods.append(item.argval) for item in ret
-                 if item.opname == 'LOAD_GLOBAL' and item.argval not in methods]
-
-        [cls._raise_error(UsingProhibitedMethod(command)) for command in cls.FORBIDDEN_CALLS if command in methods]
-
-        super().__init__(cls_name, bases, cls_dict)
-
-    def __call__(cls, *args, **kwargs):
-        inst = super().__call__(*args, **kwargs)
-
-        socket_tcp_usage = cls.check_socket_usage(inst, tcp=True)
-        if not socket_tcp_usage:
-            raise NotDetectedSocket
-
-        return inst
-
-
-class _ClientVerifierMeta(BaseVerifierMeta):
-    FORBIDDEN_CALLS = ('accept', 'listen')
-
-    def __new__(mcs, cls_name: str, bases: tuple, cls_dict: dict):
-        new_class = super().__new__(mcs, cls_name, bases, cls_dict)
-        socket_usage = mcs.check_socket_usage(new_class)
-        if socket_usage:
-            raise DetectedSocket
-        return new_class
+                # Раз функция разбираем код, получая используемые методы и атрибуты.
+                for i in ret:
+                    if i.opname == 'LOAD_GLOBAL':
+                        if i.argval not in methods:
+                            methods.append(i.argval)
+                    elif i.opname == 'LOAD_ATTR':
+                        if i.argval not in attrs:
+                            attrs.append(i.argval)
+        # Если обнаружено использование недопустимого метода connect, бросаем исключение:
+        if 'connect' in methods:
+            raise TypeError('Использование метода connect недопустимо в серверном классе')
+        # Если сокет не инициализировался константами SOCK_STREAM(TCP) AF_INET(IPv4), тоже исключение.
+        if not ('SOCK_STREAM' in attrs and 'AF_INET' in attrs):
+            raise TypeError('Некорректная инициализация сокета.')
+        super().__init__(clsname, bases, clsdict)
 
 
-class ClientVerifier(metaclass=_ClientVerifierMeta):
-    pass
-
-
-class _ServerVerifierMeta(BaseVerifierMeta):
-    FORBIDDEN_CALLS = ('connect',)
-
-
-class ServerVerifier(metaclass=_ServerVerifierMeta):
-    pass
+# Метакласс для проверки корректности клиентов:
+class ClientMaker(type):
+    def __init__(cls, clsname, bases, clsdict):
+        # Список методов, которые используются в функциях класса:
+        methods = []
+        for func in clsdict:
+            # Пробуем
+            try:
+                ret = dis.get_instructions(clsdict[func])
+                # Если не функция то ловим исключение
+            except TypeError:
+                pass
+            else:
+                # Раз функция разбираем код, получая используемые методы.
+                for i in ret:
+                    if i.opname == 'LOAD_GLOBAL':
+                        if i.argval not in methods:
+                            methods.append(i.argval)
+        # Если обнаружено использование недопустимого метода accept, listen, socket бросаем исключение:
+        for command in ('accept', 'listen', 'socket'):
+            if command in methods:
+                raise TypeError('В классе обнаружено использование запрещённого метода')
+        # Вызов get_message или send_message из utils считаем корректным использованием сокетов
+        if 'get_message' in methods or 'send_message' in methods:
+            pass
+        else:
+            raise TypeError('Отсутствуют вызовы функций, работающих с сокетами.')
+        super().__init__(clsname, bases, clsdict)

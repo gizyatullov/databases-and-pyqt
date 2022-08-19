@@ -1,48 +1,51 @@
 import logging
 
-MIN_PORT_NUMBER = 1024
-MAX_PORT_NUMBER = 65535
-
-ANON_ACCOUNT_NAME = 'anonymous'
-
-DEFAULT_LISTEN_ADDRESS = ''
-DEFAULT_PORT = 5151
+# Порт поумолчанию для сетевого ваимодействия
+DEFAULT_PORT = 7777
+# IP адрес по умолчанию для подключения клиента
 DEFAULT_IP_ADDRESS = '127.0.0.1'
-MAX_CONNECTIONS = 1
+# Максимальная очередь подключений
+MAX_CONNECTIONS = 5
+# Максимальная длинна сообщения в байтах
 MAX_PACKAGE_LENGTH = 1024
+# Кодировка проекта
 ENCODING = 'utf-8'
+# Текущий уровень логирования
+LOGGING_LEVEL = logging.DEBUG
+# База данных для хранения данных сервера:
+SERVER_CONFIG = 'server.ini'
 
+# Прококол JIM основные ключи:
 ACTION = 'action'
 TIME = 'time'
 USER = 'user'
 ACCOUNT_NAME = 'account_name'
 SENDER = 'from'
-EXIT = 'exit'
+DESTINATION = 'to'
 
+# Прочие ключи, используемые в протоколе
 PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
 MESSAGE = 'message'
-MESSAGE_TEXT = 'message_text'
-RESPONDEFAULT_IP_ADDRESSSE = 'respondefault_ip_addressse'
+MESSAGE_TEXT = 'mess_text'
+EXIT = 'exit'
+GET_CONTACTS = 'get_contacts'
+LIST_INFO = 'data_list'
+REMOVE_CONTACT = 'remove'
+ADD_CONTACT = 'add'
+USERS_REQUEST = 'get_users'
 
-STATUS_OK = 200
-STATUS_BAD_REQUEST = 400
-
-LOGGING_LEVEL = logging.DEBUG
-
-EXIT_CLIENT_CHAR = '^'
-
-ACCEPTABLE_CLIENT_MODES: tuple = ('listen', 'send')
-
-NAME_IS_OCCUPIED = 'Имя пользователя уже занято.'
-REQUEST_IS_INCORRECT = 'Запрос некорректен.'
-DESTINATION = 'to'
-
+# Словари - ответы:
+# 200
 RESPONSE_200 = {RESPONSE: 200}
+# 202
+RESPONSE_202 = {RESPONSE: 202,
+                LIST_INFO:None
+                }
+# 400
 RESPONSE_400 = {
-    RESPONSE: 400,
-    ERROR: None
-}
+            RESPONSE: 400,
+            ERROR: None
+        }
 
-SERVER_DB = 'sqlite:///db.sqlite3'
