@@ -1,92 +1,62 @@
-"""Unit-тесты утилит"""
-
-import unittest
 import sys
-import json
-from time import time
-from pathlib import Path
-
-sys.path.append(f'{Path(__file__).resolve().parent.parent}')
+sys.path.append('../')
+from common.utils import *
 from common.variables import *
-from common.utils import Utils
-from errors import NotDict, NotBytes, MaxLen
+import unittest
+from errors import NonDictInputError
 
 
+# Тестовый класс для тестирования отпраки и получения, при создании требует словарь, который будет прогонятся
+# через тестовую функцию
 class TestSocket:
-    def __init__(self, test_data: dict = None, give_away_bytes=True) -> None:
-        self.test_data = test_data
-        self.encoded_message = ''
-        self.received_message = ''
-        self.send_encoded_message = ''
+    def __init__(self, test_dict):
+        self.testdict = test_dict
 
-        self.give_away_bytes = give_away_bytes
+    # тестовая функция отправки, корретно  кодирует сообщение, так-же сохраняет что должно было отправлено в сокет.
+    def send(self, message_to_send):
+        json_test_message = json.dumps(self.testdict)
+        self.encoded_message = json_test_message.encode(ENCODING)
+        self.receved_message = message_to_send
 
-    def send_message(self, message: dict) -> None:
-        """Имитация отправления в сокет"""
-        self.received_message = message
-        json_message = json.dumps(message)
-        self.encoded_message = json_message.encode(ENCODING)
-
-    def recv(self, max_len_message: int) -> None:
-        """Имитация чтения из сокета"""
-        json_message = json.dumps(self.test_data)
-        if len(json_message) > max_len_message:
-            raise MaxLen
-        if self.give_away_bytes:
-            return json_message.encode(ENCODING)
-        return json_message
-
-    def send(self, message: bytes) -> None:
-        decode_message = message.decode(ENCODING)
-        json_message = json.loads(decode_message)
-        self.send_encoded_message = json_message
+    def recv(self, max_len):
+        json_test_message = json.dumps(self.testdict)
+        return json_test_message.encode(ENCODING)
 
 
-class TestUtils(unittest.TestCase):
-    def setUp(self) -> None:
-        self.utils = Utils()
-        self.time = time()
-        self.dict_for_send = {
-            ACTION: PRESENCE,
-            TIME: self.time,
-            USER: {
-                ACCOUNT_NAME: 'test_user'
-            }
+# Тестовый класс, собственно выполняющий тестирование.
+class Tests(unittest.TestCase):
+    test_dict_send = {
+        ACTION: PRESENCE,
+        TIME: 111111.111111,
+        USER: {
+            ACCOUNT_NAME: 'test_test'
         }
+    }
+    test_dict_recv_ok = {RESPONSE: 200}
+    test_dict_recv_err = {
+        RESPONSE: 400,
+        ERROR: 'Bad Request'
+    }
 
-        self.test_dict_recv_err = {
-            RESPONSE: 400,
-            ERROR: 'Bad Request'
-        }
+    # тестируем корректность работы фукции отправки,создадим тестовый сокет и проверим корректность отправки словаря
+    def test_send_message(self):
+        # экземпляр тестового словаря, хранит собственно тестовый словарь
+        test_socket = TestSocket(self.test_dict_send)
+        # вызов тестируемой функции, результаты будут сохранены в тестовом сокете
+        send_message(test_socket, self.test_dict_send)
+        # проверка корретности кодирования словаря. сравниваем результат довренного кодирования и результат от тестируемой функции
+        self.assertEqual(test_socket.encoded_message, test_socket.receved_message)
+        # дополнительно, проверим генерацию исключения, при не словаре на входе.
+        self.assertRaises(NonDictInputError, send_message, test_socket, 1111)
 
-    def tearDown(self) -> None:
-        pass
-
-    def test_get_message(self) -> None:
-        response = self.utils.get_message(TestSocket(self.dict_for_send))
-        self.assertEqual(response, self.dict_for_send)
-
-    def test_get_message_no_dict(self) -> None:
-        self.assertRaises(NotDict, self.utils.get_message, TestSocket(''))
-
-    def test_get_message_not_bytes(self) -> None:
-        self.assertRaises(NotBytes, self.utils.get_message, TestSocket(self.dict_for_send, give_away_bytes=False))
-
-    def test_get_message_len_error(self) -> None:
-        self.assertRaises(MaxLen, self.utils.get_message, TestSocket({'param': 'a' * 1024}))
-
-    def test_get_message_bad_request(self) -> None:
-        response = self.utils.get_message(TestSocket(self.test_dict_recv_err))
-        self.assertEqual(response, self.test_dict_recv_err)
-
-    def test_send_message(self) -> None:
-        sock_send = TestSocket()
-        response = self.utils.send_message(sock_send, self.dict_for_send)
-        self.assertEqual(sock_send.send_encoded_message, self.dict_for_send)
-
-    def test_send_message_not_dict(self) -> None:
-        sock_send = TestSocket()
-        self.assertRaises(NotDict, self.utils.send_message, sock_send, '')
+    # тест функции приёма сообщения
+    def test_get_message(self):
+        test_sock_ok = TestSocket(self.test_dict_recv_ok)
+        test_sock_err = TestSocket(self.test_dict_recv_err)
+        # тест корректной расшифровки корректного словаря
+        self.assertEqual(get_message(test_sock_ok), self.test_dict_recv_ok)
+        # тест корректной расшифровки ошибочного словаря
+        self.assertEqual(get_message(test_sock_err), self.test_dict_recv_err)
 
 
 if __name__ == '__main__':

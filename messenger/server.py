@@ -138,7 +138,7 @@ class Server(threading.Thread, metaclass=ServerMaker):
     # пользователей и слушающие сокеты. Ничего не возвращает.
     def process_message(self, message, listen_socks):
         if message[DESTINATION] in self.names and self.names[message[DESTINATION]
-        ] in listen_socks:
+                                                             ] in listen_socks:
             send_message(self.names[message[DESTINATION]], message)
             logger.info(
                 f'Отправлено сообщение пользователю {message[DESTINATION]} от пользователя {message[SENDER]}.')
