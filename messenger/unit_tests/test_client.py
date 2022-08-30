@@ -1,57 +1,30 @@
-"""Unit-тесты клиента"""
-
-import unittest
 import sys
-import os
-
-sys.path.append(os.path.join(os.getcwd(), '..'))
-
+sys.path.append('../')
+from client import create_presence, process_response_ans
 from common.variables import *
-from client import Client
+import unittest
+from errors import ReqFieldMissingError, ServerError
 
 
-class TestClient(unittest.TestCase):
-    def setUp(self) -> None:
-        self.client = Client()
-        self.time = 1653374086.2337894
-        self.presence_message = {
-            ACTION: PRESENCE,
-            TIME: self.time,
-            USER: {
-                ACCOUNT_NAME: ANON_ACCOUNT_NAME,
-            },
-        }
+# Класс с тестами
+class TestClass(unittest.TestCase):
+    # тест коректного запроса
+    def test_def_presense(self):
+        test = create_presence('Guest')
+        test[TIME] = 1.1  # время необходимо приравнять принудительно иначе тест никогда не будет пройден
+        self.assertEqual(test, {ACTION: PRESENCE, TIME: 1.1, USER: {ACCOUNT_NAME: 'Guest'}})
 
-        self.server_message_ok = {
-            'response': 200,
-        }
-        self.server_message_error = {
-            'response': 400,
-            'error': 'Bad Request',
-        }
+    # тест корректтного разбора ответа 200
+    def test_200_ans(self):
+        self.assertEqual(process_response_ans({RESPONSE: 200}), '200 : OK')
 
-    def tearDown(self) -> None:
-        pass
+    # тест корректного разбора 400
+    def test_400_ans(self):
+        self.assertRaises(ServerError, process_response_ans , {RESPONSE: 400, ERROR: 'Bad Request'})
 
-    def test_create_presence(self) -> None:
-        response = self.client.create_presence()
-        response['time'] = self.time
-        self.assertEqual(response, self.presence_message)
-
-    def test_create_presence_error(self) -> None:
-        response = self.client.create_presence()
-        self.assertNotEqual(response, self.presence_message)
-
-    def test_parse_server_message(self) -> None:
-        response = self.client.parse_server_message(message=self.server_message_ok)
-        self.assertEqual(response, '200 OK')
-
-    def test_parse_server_message_bad_request(self) -> None:
-        response = self.client.parse_server_message(message=self.server_message_error)
-        self.assertEqual(response, '400 Bad Request')
-
-    def test_parse_server_message_raise_error(self) -> None:
-        self.assertRaises(ValueError, self.client.parse_server_message, message={})
+    # тест исключения без поля RESPONSE
+    def test_no_response(self):
+        self.assertRaises(ReqFieldMissingError, process_response_ans, {ERROR: 'Bad Request'})
 
 
 if __name__ == '__main__':
