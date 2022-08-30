@@ -1,0 +1,17 @@
+2022-05-31 13:30:19,410 DEBUG Вызов функции main из модуля __main__ 
+с параметрами позиционными (<__main__.Server object at 0x000001ABC6288A00>,) и именованными нет, 
+функцией server.main() из модуля server.py. 
+С комментарием «no comments».
+ decorators.py
+2022-05-31 13:30:29,973 DEBUG Вызов функции get_message из модуля common.utils 
+с параметрами позиционными (<__main__.Server object at 0x000001ABC6288A00>, <socket.socket fd=344, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 7777), raddr=('127.0.0.1', 52270)>) и именованными нет, 
+функцией main из модуля server.py. 
+ decorators.py
+2022-05-31 13:30:29,973 DEBUG Вызов функции process_client_message из модуля __main__ 
+с параметрами позиционными (<__main__.Server object at 0x000001ABC6288A00>, {'action': 'presence', 'time': 1653989429.9418988, 'user': {'account_name': 'anonymous'}}) и именованными нет, 
+функцией main из модуля server.py. 
+ decorators.py
+2022-05-31 13:30:29,973 DEBUG Вызов функции send_message из модуля common.utils 
+с параметрами позиционными (<__main__.Server object at 0x000001ABC6288A00>, <socket.socket fd=344, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 7777), raddr=('127.0.0.1', 52270)>, {'response': 200}) и именованными нет, 
+функцией main из модуля server.py. 
+ decorators.py
