@@ -1,0 +1,20 @@
+2022-09-05 12:36:55,377 DEBUG decos.py Была вызвана функция main c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:36:55,377 DEBUG decos.py Была вызвана функция config_load c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:36:55,377 DEBUG decos.py Была вызвана функция arg_parser c параметрами ('7777', '') , {}. Вызов из модуля __main__
+2022-09-05 12:36:55,377 DEBUG server_test.py Инициализация парсера аргументов коммандной строки: ['F:\\developer\\repositories\\databases-and-pyqt\\messenger\\exe\\server\\build\\exe.win-amd64-3.10\\server.exe']
+2022-09-05 12:36:55,377 DEBUG server_test.py Аргументы успешно загружены.
+2022-09-05 12:37:21,798 DEBUG decos.py Была вызвана функция main c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:37:21,798 DEBUG decos.py Была вызвана функция config_load c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:37:21,798 DEBUG decos.py Была вызвана функция arg_parser c параметрами ('7777', '') , {}. Вызов из модуля __main__
+2022-09-05 12:37:21,798 DEBUG server_test.py Инициализация парсера аргументов коммандной строки: ['F:\\developer\\repositories\\databases-and-pyqt\\messenger\\exe\\server\\build\\exe.win-amd64-3.10\\server.exe']
+2022-09-05 12:37:21,798 DEBUG server_test.py Аргументы успешно загружены.
+2022-09-05 12:37:33,582 DEBUG decos.py Была вызвана функция main c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:37:33,582 DEBUG decos.py Была вызвана функция config_load c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:37:33,582 DEBUG decos.py Была вызвана функция arg_parser c параметрами ('7777', '') , {}. Вызов из модуля __main__
+2022-09-05 12:37:33,582 DEBUG server_test.py Инициализация парсера аргументов коммандной строки: ['F:\\developer\\repositories\\databases-and-pyqt\\messenger\\exe\\server\\build\\exe.win-amd64-3.10\\server.exe']
+2022-09-05 12:37:33,582 DEBUG server_test.py Аргументы успешно загружены.
+2022-09-05 12:38:22,827 DEBUG decos.py Была вызвана функция main c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:38:22,827 DEBUG decos.py Была вызвана функция config_load c параметрами () , {}. Вызов из модуля __main__
+2022-09-05 12:38:22,827 DEBUG decos.py Была вызвана функция arg_parser c параметрами ('7777', '') , {}. Вызов из модуля __main__
+2022-09-05 12:38:22,827 DEBUG server_test.py Инициализация парсера аргументов коммандной строки: ['F:\\developer\\repositories\\databases-and-pyqt\\messenger\\exe\\server\\build\\exe.win-amd64-3.10\\server.exe']
+2022-09-05 12:38:22,827 DEBUG server_test.py Аргументы успешно загружены.
